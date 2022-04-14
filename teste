@@ -1,0 +1,191 @@
+CREATE
+    EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE SEQUENCE contato_id_seq;
+CREATE TABLE contato
+(
+    id           BIGINT    NOT NULL DEFAULT nextval('contato_id_seq'),
+    ddd_telefone NUMERIC(2),
+    telefone     NUMERIC(8),
+    ddd_celular  NUMERIC(2),
+    celular      NUMERIC(9),
+    ddd_fax      NUMERIC(2),
+    fax          NUMERIC(8),
+    email        VARCHAR(100),
+    ts_inclusao  timestamp NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE endereco_id_seq;
+CREATE TABLE endereco
+(
+    id          BIGINT       NOT NULL DEFAULT nextval('endereco_id_seq'),
+    cep         NUMERIC(10),
+    rua         VARCHAR(255) NOT NULL,
+    numero      VARCHAR(255),
+    bairro      VARCHAR(255) NOT NULL,
+    complemento varchar(255),
+    cidade      VARCHAR(255) NOT NULL,
+    municipio   VARCHAR(255) NOT NULL,
+    estado      VARCHAR(255) NOT NULL,
+    ts_inclusao timestamp    NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE validacao_id_seq;
+CREATE TABLE validacao
+(
+    id          BIGINT    NOT NULL DEFAULT nextval('validacao_id_seq'),
+    validacao   VARCHAR(255),
+    ts_inclusao timestamp NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE cancelamento_id_seq;
+CREATE TABLE cancelamento
+(
+    id              BIGINT    NOT NULL DEFAULT nextval('cancelamento_id_seq'),
+    ts_cancelamento timestamp NOT NULL DEFAULT now(),
+    ts_inclusao     timestamp NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE frenquencia_id_seq;
+CREATE TABLE frenquencia
+(
+    id            BIGINT       NOT NULL DEFAULT nextval('frenquencia_id_seq'),
+    mensal        VARCHAR(255) NOT NULL,
+    bimestral     VARCHAR(255) NOT NULL,
+    trimestral    VARCHAR(255) NOT NULL,
+    quadrimestral VARCHAR(255) NOT NULL,
+    semestral     VARCHAR(255) NOT NULL,
+    anual         VARCHAR(255) NOT NULL,
+    ts_inclusao   timestamp    NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE linha_produtos_id_seq;
+CREATE TABLE linha_produtos
+(
+    id             BIGINT       NOT NULL DEFAULT nextval('linha_produtos_id_seq'),
+    linha_produtos VARCHAR(255) NOT NULL,
+    ts_inclusao    timestamp    NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE data_id_seq;
+CREATE TABLE data
+(
+    id          BIGINT    NOT NULL DEFAULT nextval('data_id_seq'),
+    data        DATE      NOT NULL,
+    ts_inclusao timestamp NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE horario_id_seq;
+CREATE TABLE horario
+(
+    id           BIGINT       NOT NULL DEFAULT nextval('horario_id_seq'),
+    horario      VARCHAR(255) NOT NULL,
+    data_agen_id DATE,
+    ts_inclusao  timestamp    NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE representante_tipo_id_seq;
+CREATE TABLE representante_tipo
+(
+    id          BIGINT    NOT NULL DEFAULT nextval('representante_tipo_id_seq'),
+    tipo        VARCHAR(255),
+    ts_inclusao timestamp NOT NULL DEFAULT now(),
+    PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE mercadoria_seq;
+CREATE TABLE mercadoria
+(
+    id                     BIGINT        NOT NULL DEFAULT nextval('mercadoria_seq'),
+    ean                    BIGINT,
+    referencia             VARCHAR(255)  NOT NULL,
+    descricao              VARCHAR(255)  NOT NULL,
+    embalagem              VARCHAR(255)  NOT NULL,
+    unidade                BIGINT        NOT NULL,
+    qtdembalagem           BIGINT        NOT NULL,
+    valor_unidade          NUMERIC(8, 2) NOT NULL,
+    valor_total            NUMERIC(8, 2),
+    mercadoria_planilha_id BIGINT,
+    representante_id       UUID,
+    cancelamento_id        BIGINT,
+    ts_inclusao            timestamp     NOT NULL DEFAULT now(),
+    PRIMARY KEY (id),
+    CONSTRAINT representante_fk_representante FOREIGN KEY (representante_id) REFERENCES representante (id),
+    CONSTRAINT cancelamento_fk_cancelamento FOREIGN KEY (cancelamento_id) REFERENCES cancelamento (id),
+    CONSTRAINT mercadoria_planilha_fk_mercadoria_planilha FOREIGN KEY (mercadoria_planilha_id) REFERENCES mercadoria_planilha (id)
+);
+
+
+CREATE SEQUENCE mercadoria_planilha_seq;
+CREATE TABLE mercadoria_planilha
+(
+    id               BIGINT    NOT NULL DEFAULT nextval('mercadoria_planilha_seq'),
+    fl_validacao     BOOLEAN   NOT NULL DEFAULT FALSE,
+    nome_planilha    VARCHAR(255),
+    representante_id UUID,
+    cancelamento_id  BIGINT,
+    ts_inclusao      timestamp NOT NULL DEFAULT now(),
+    PRIMARY KEY (id),
+    CONSTRAINT representante_fk_representante FOREIGN KEY (representante_id) REFERENCES representante (id),
+    CONSTRAINT cancelamento_fk_cancelamento FOREIGN KEY (cancelamento_id) REFERENCES cancelamento (id)
+);
+
+
+CREATE SEQUENCE agendamento_id_seq;
+CREATE TABLE agendamento
+(
+    id               BIGINT    NOT NULL DEFAULT nextval('agendamento_id_seq'),
+    data             DATE,
+    representante_id UUID,
+    horario_id       BIGINT,
+    cancelamento_id  BIGINT,
+    validacao_id     BIGINT,
+    ts_inclusao      timestamp NOT NULL DEFAULT now(),
+    PRIMARY KEY (id),
+    CONSTRAINT representante_fk_representante FOREIGN KEY (representante_id) REFERENCES representante (id),
+    CONSTRAINT representante_fk_horario FOREIGN KEY (horario_id) REFERENCES horario (id),
+    CONSTRAINT cancelamento_fk_cancelamento FOREIGN KEY (cancelamento_id) REFERENCES cancelamento (id),
+    CONSTRAINT representante_fk_validacao FOREIGN KEY (validacao_id) REFERENCES validacao (id)
+);
+
+CREATE TABLE empresa
+(
+    id            UUID                        DEFAULT uuid_generate_v4(),
+    contato_id    BIGINT,
+    endereco_id   BIGINT,
+    razao_social  VARCHAR(255)       NOT NULL,
+    nome_fantasia VARCHAR(255)       NOT NULL,
+    CNPJ          VARCHAR(14) UNIQUE NOT NULL,
+    ts_inclusao   timestamp          NOT NULL default now(),
+    PRIMARY KEY (id),
+    CONSTRAINT representante_fk_contato FOREIGN KEY (contato_id) REFERENCES contato (id),
+    CONSTRAINT representante_fk_endereco FOREIGN KEY (endereco_id) REFERENCES endereco (id)
+);
+
+CREATE TABLE representante
+(
+    id                    UUID                        DEFAULT uuid_generate_v4(),
+    frequencia            NUMERIC(4),
+    empresa_id            UUID               NOT NULL,
+    contato_id            BIGINT             NOT NULL,
+    validacao_id          BIGINT,
+    agendamento_id        BIGINT,
+    tipo_representante_id BIGINT,
+    doc1                  VARCHAR(14) UNIQUE NOT NULL,
+    nome_completo         VARCHAR(200)       NOT NULL,
+    ts_inclusao           timestamp          NOT NULL DEFAULT now(),
+    cancelamento_id       BIGINT,
+    PRIMARY KEY (id),
+    CONSTRAINT representante_fk_contato FOREIGN KEY (contato_id) REFERENCES contato (id),
+    CONSTRAINT representante_fk_empresa FOREIGN KEY (empresa_id) REFERENCES empresa (id),
+    CONSTRAINT representante_fk_agendamento FOREIGN KEY (agendamento_id) REFERENCES agendamento (id),
+    CONSTRAINT representante_fk_representante_tipo FOREIGN KEY (representante_tipo_id) REFERENCES representante_tipo (id)
+);
