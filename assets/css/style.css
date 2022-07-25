@@ -1,134 +1,112 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+
 :root {
-  --primary-color: rgb(0, 0, 0);
-  --primary-color-darker: rgb(9, 48, 56);
+    --primary-color: rgb(0, 0, 0);
+    --secondary-color: rgb(255, 255, 255);
+    --primary-color-darker: rgb(107, 107, 107);
 }
 
 * {
-  box-sizing: border-box;
-  outline: 0;
+    box-sizing: border-box;
+    outline: 0;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background: var(--primary-color);
-  font-family: 'Open sans', sans-serif;
-  font-size: 1.3em;
-  line-height: 1.5em;
+    margin: 0;
+    padding: 0;
+    background: var(--primary-color);
+    font-family: 'Open sans', sans-serif;
+    font-size: 1.3em;
+    line-height: 1.5em;
 }
 
 .container {
-  max-width: 640px;
-  margin: 50px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
+    max-width: 640px;
+    margin: 50px auto;
+    background: rgba(33, 33, 33, 0.21);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: var(--secondary-color);
 }
 
-form input, form label, form button {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-form input {
-  font-size: 24px;
-  height: 50px;
-  padding: 0 20px;
-}
-
-form input:focus {
-  outline: 1px solid var(--primary-color);
-}
-
-form button {
-  border: none;
-  background: var(--primary-color);
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  height: 50px;
-  cursor: pointer;
-  margin-top: 30px;
-}
-
-form button:hover {
-  background: var(--primary-color-darker);
-}
 .clock {
-  font-size: 3em;
+    font-size: 3em;
+    color: var(--primary-color-darker);
 }
 
 .paused {
-  color: red;
+    color: red;
 }
 
 .start {
-  display: inline-block;
-  padding: 11px 25px;
-  font-size: 16px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  color: #fff;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 15px;
+    display: inline-block;
+    padding: 11px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 15px;
 }
 
-.start:hover {background-color: #3e8e41}
+.start:hover {
+    background-color: #3e8e41
+}
 
 .start:active {
-  background-color: #3e8e41;
-  box-shadow: 0 2px #666;
-  transform: translateY(4px);
+    background-color: #3e8e41;
+    box-shadow: 0 2px #666;
+    transform: translateY(4px);
 }
 
 .pause {
-  display: inline-block;
-  padding: 11px 25px;
-  font-size: 16px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  color: #fff;
-  background-color: #4c68af;
-  border: none;
-  border-radius: 15px;
+    display: inline-block;
+    padding: 11px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #4c68af;
+    border: none;
+    border-radius: 15px;
 }
 
-.pause:hover {background-color: #3e4e8e
+.pause:hover {
+    background-color: #3e4e8e
 }
 
 .pause:active {
-  background-color: #4c68af;
-  box-shadow: 0 2px #666;
-  transform: translateY(4px);
+    background-color: #4c68af;
+    box-shadow: 0 2px #666;
+    transform: translateY(4px);
 }
 
 .zero {
-  display: inline-block;
-  padding: 11px 25px;
-  font-size: 16px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  color: #fff;
-  background-color: #ff0000;
-  border: none;
-  border-radius: 15px;
+    display: inline-block;
+    padding: 11px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #ff0000;
+    border: none;
+    border-radius: 15px;
 }
 
-.zero:hover {background-color: #be2121
+.zero:hover {
+    background-color: #be2121
 }
 
 .zero:active {
-  background-color: #ff0000;
-  box-shadow: 0 2px #666;
-  transform: translateY(4px);
+    background-color: #ff0000;
+    box-shadow: 0 2px #666;
+    transform: translateY(4px);
 }
